@@ -1,0 +1,14 @@
+# IP威胁收集分析服务 - Cron定时任务示例
+#
+# 如果不想使用systemd服务，可以使用cron定时执行
+# 编辑crontab: crontab -e
+#
+
+# 每5分钟执行一次扫描
+*/5 * * * * /usr/bin/python3 /www/server/ipcollect/main.py --once >> /www/server/ipcollect/logs/cron.log 2>&1
+
+# 每小时执行一次全量扫描
+# 0 * * * * /usr/bin/python3 /www/server/ipcollect/main.py --once --full >> /www/server/ipcollect/logs/cron.log 2>&1
+
+# 每天凌晨导出所有HIGH及以上威胁IP
+# 0 0 * * * /usr/bin/python3 /www/server/ipcollect/main.py --export --min-level HIGH >> /www/server/ipcollect/logs/cron.log 2>&1

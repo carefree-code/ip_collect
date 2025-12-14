@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP威胁分析 - 管理面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        header p {
+            opacity: 0.9;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .stat-card.critical .value { color: #e74c3c; }
+        .stat-card.high .value { color: #e67e22; }
+        .stat-card.medium .value { color: #f1c40f; }
+        .stat-card.low .value { color: #3498db; }
+        .stat-card.total .value { color: #667eea; }
+        .stat-card.today .value { color: #27ae60; }
+
+        /* 图表区域 */
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .chart-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 150px;
+            gap: 10px;
+        }
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px 5px 0 0;
+            min-height: 5px;
+            position: relative;
+            transition: height 0.3s;
+        }
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        .chart-bar .count {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .chart-bar .date {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-bar input,
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .filter-bar input:focus,
+        .filter-bar select:focus {
+            border-color: #667eea;
+        }
+        .filter-bar input[type="text"] {
+            width: 250px;
+        }
+        .filter-bar button {
+            padding: 8px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .filter-bar button:hover {
+            background: #5a6fd6;
+        }
+        .filter-bar .export-btn {
+            background: #27ae60;
+            margin-left: auto;
+        }
+        .filter-bar .export-btn:hover {
+            background: #219a52;
+        }
+
+        /* 表格 */
+        .table-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+        }
+        th:hover {
+            background: #eee;
+        }
+        th.sorted-asc::after { content: ' ↑'; }
+        th.sorted-desc::after { content: ' ↓'; }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        td {
+            font-size: 14px;
+        }
+        .ip-link {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .ip-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 威胁等级标签 */
+        .level-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .level-CRITICAL { background: #fde8e8; color: #e74c3c; }
+        .level-HIGH { background: #fef3e2; color: #e67e22; }
+        .level-MEDIUM { background: #fef9e7; color: #d4a000; }
+        .level-LOW { background: #e8f4fd; color: #3498db; }
+
+        /* 原因标签 */
+        .reason-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 300px;
+        }
+        .reason-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #666;
+        }
+        .reason-tag.critical { background: #fde8e8; color: #e74c3c; }
+        .reason-tag.high { background: #fef3e2; color: #e67e22; }
+        .reason-tag.medium { background: #fef9e7; color: #d4a000; }
+
+        /* 操作按钮 */
+        .action-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+            margin-right: 5px;
+        }
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        .action-btn.view {
+            background: #667eea;
+            color: white;
+        }
+        .action-btn.delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+        }
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pagination button:hover:not(:disabled) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(85vh - 70px);
+        }
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .detail-section h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            width: 100px;
+            font-weight: 600;
+            color: #666;
+            flex-shrink: 0;
+        }
+        .detail-value {
+            flex: 1;
+        }
+        .detail-value.ip {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        .reason-list {
+            list-style: none;
+        }
+        .reason-list li {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .reason-list li.critical { border-left-color: #e74c3c; background: #fef5f5; }
+        .reason-list li.high { border-left-color: #e67e22; background: #fef9f5; }
+        .reason-list li.medium { border-left-color: #f1c40f; background: #fffef5; }
+        .reason-list li .reason-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .reason-list li .reason-desc {
+            font-size: 12px;
+            color: #666;
+        }
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .score-bar .bar {
+            flex: 1;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .score-bar .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .score-bar .bar-fill.critical { background: #e74c3c; }
+        .score-bar .bar-fill.high { background: #e67e22; }
+        .score-bar .bar-fill.medium { background: #f1c40f; }
+        .score-bar .bar-fill.low { background: #3498db; }
+        .score-value {
+            font-weight: 700;
+            font-size: 18px;
+            min-width: 40px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-bar input[type="text"] {
+                width: 100%;
+            }
+            .filter-bar .export-btn {
+                margin-left: 0;
+            }
+            .table-card {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 800px;
+            }
+            .modal {
+                width: 95%;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IP威胁分析管理面板</h1>
+            <p>实时监控和分析威胁IP</p>
+        </header>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid" id="stats">
+            <div class="stat-card total">
+                <div class="label">总威胁IP</div>
+                <div class="value" id="stat-total">-</div>
+            </div>
+            <div class="stat-card today">
+                <div class="label">今日新增</div>
+                <div class="value" id="stat-today">-</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="label">严重威胁</div>
+                <div class="value" id="stat-critical">-</div>
+            </div>
+            <div class="stat-card high">
+                <div class="label">高危威胁</div>
+                <div class="value" id="stat-high">-</div>
+            </div>
+            <div class="stat-card medium">
+                <div class="label">中等威胁</div>
+                <div class="value" id="stat-medium">-</div>
+            </div>
+            <div class="stat-card low">
+                <div class="label">低危威胁</div>
+                <div class="value" id="stat-low">-</div>
+            </div>
+        </div>
+
+        <!-- 趋势图 -->
+        <div class="chart-card">
+            <h3>最近7天威胁趋势</h3>
+            <div class="chart-bars" id="chart"></div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+            <input type="text" id="search" placeholder="搜索 IP 或原因...">
+            <select id="level-filter">
+                <option value="">全部等级</option>
+                <option value="CRITICAL">严重</option>
+                <option value="HIGH">高危</option>
+                <option value="MEDIUM">中等</option>
+                <option value="LOW">低危</option>
+            </select>
+            <button onclick="loadThreats()">搜索</button>
+            <button class="export-btn" onclick="exportData()">导出IP</button>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-sort="ip">IP地址</th>
+                        <th data-sort="threat_level">威胁等级</th>
+                        <th data-sort="score">分数</th>
+                        <th>威胁原因</th>
+                        <th data-sort="hit_count">命中次数</th>
+                        <th data-sort="first_seen">首次发现</th>
+                        <th data-sort="last_seen">最后活动</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="8" class="loading">加载中</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+            <button id="prev-btn" onclick="prevPage()" disabled>上一页</button>
+            <span id="page-info">第 1 页</span>
+            <button id="next-btn" onclick="nextPage()" disabled>下一页</button>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="text-align: center; padding: 20px; margin-top: 30px; color: #666; font-size: 13px; border-top: 1px solid #eee;">
+        <p style="margin: 5px 0;">IP威胁收集分析服务 v1.0.0</p>
+        <p style="margin: 5px 0;">
+            作者: <strong>sinma</strong> |
+            网站: <a href="https://www.carefreecode.com/" target="_blank" style="color: #667eea; text-decoration: none;">carefreecode.com</a> |
+            QQ: <strong>42033223</strong>
+        </p>
+    </footer>
+
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>威胁IP详情</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentSort = 'score';
+        let currentOrder = 'desc';
+        let threatsData = []; // 缓存当前数据
+
+        // 威胁原因描述映射
+        const reasonDescriptions = {
+            '高频访问': '短时间内发送大量请求，可能是爬虫、扫描器或DDoS攻击',
+            '敏感路径扫描': '尝试访问敏感文件或目录，如配置文件、后台入口等',
+            'SQL注入特征': '请求中包含SQL注入攻击代码',
+            'XSS攻击特征': '请求中包含跨站脚本攻击代码',
+            '路径遍历攻击': '尝试通过../等方式访问系统文件',
+            '命令注入特征': '请求中包含系统命令注入代码',
+            '文件包含攻击': '尝试利用文件包含漏洞读取或执行文件',
+            'SSRF攻击特征': '尝试服务端请求伪造攻击',
+            'XXE攻击特征': 'XML外部实体注入攻击',
+            '模板注入特征': '服务端模板注入攻击',
+            'Java反序列化攻击': 'Java反序列化漏洞利用',
+            '恶意UA': '使用已知的攻击工具User-Agent',
+            'WAF拦截': '被Web应用防火墙拦截的恶意请求',
+            'SSH登录失败': 'SSH暴力破解尝试',
+            '大量错误响应': '触发大量4xx/5xx错误，可能是扫描或攻击行为'
+        };
+
+        // 根据原因获取严重程度
+        function getReasonSeverity(reason) {
+            const criticalReasons = ['SQL注入', 'WAF拦截', '命令注入', 'Java反序列化', 'SSH登录失败'];
+            const highReasons = ['XSS', '路径遍历', '文件包含', 'SSRF', 'XXE', '模板注入'];
+
+            for (const r of criticalReasons) {
+                if (reason.includes(r)) return 'critical';
+            }
+            for (const r of highReasons) {
+                if (reason.includes(r)) return 'high';
+            }
+            if (reason.includes('敏感路径') || reason.includes('恶意UA')) return 'medium';
+            return '';
+        }
+
+        // 获取原因描述
+        function getReasonDescription(reason) {
+            for (const [key, desc] of Object.entries(reasonDescriptions)) {
+                if (reason.includes(key)) return desc;
+            }
+            return '检测到可疑行为';
+        }
+
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+
+                document.getElementById('stat-total').textContent = data.total || 0;
+                document.getElementById('stat-today').textContent = data.today || 0;
+                document.getElementById('stat-critical').textContent = data.critical || 0;
+                document.getElementById('stat-high').textContent = data.high || 0;
+                document.getElementById('stat-medium').textContent = data.medium || 0;
+                document.getElementById('stat-low').textContent = data.low || 0;
+
+                // 绘制趋势图
+                if (data.trends) {
+                    renderChart(data.trends);
+                }
+            } catch (e) {
+                console.error('加载统计失败:', e);
+            }
+        }
+
+        // 绘制图表
+        function renderChart(trends) {
+            const chart = document.getElementById('chart');
+            const maxCount = Math.max(...trends.map(t => t.count), 1);
+
+            chart.innerHTML = trends.map(t => {
+                const height = (t.count / maxCount) * 120 + 10;
+                const date = t.date.slice(5); // MM-DD
+                return `
+                    <div class="chart-bar" style="height: ${height}px">
+                        <span class="count">${t.count}</span>
+                        <span class="date">${date}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 加载威胁列表
+        async function loadThreats() {
+            const search = document.getElementById('search').value;
+            const level = document.getElementById('level-filter').value;
+
+            const params = new URLSearchParams({
+                page: currentPage,
+                per_page: 20,
+                sort: currentSort,
+                order: currentOrder
+            });
+            if (search) params.append('search', search);
+            if (level) params.append('level', level);
+
+            document.getElementById('table-body').innerHTML =
+                '<tr><td colspan="8" class="loading">加载中</td></tr>';
+
+            try {
+                const res = await fetch('/api/threats?' + params);
+                const data = await res.json();
+
+                totalPages = data.pages || 1;
+                threatsData = data.data || [];
+                renderTable(threatsData);
+                updatePagination();
+            } catch (e) {
+                console.error('加载失败:', e);
+                document.getElementById('table-body').innerHTML =
+                    '<tr><td colspan="8">加载失败</td></tr>';
+            }
+        }
+
+        // 渲染表格
+        function renderTable(threats) {
+            const tbody = document.getElementById('table-body');
+
+            if (!threats.length) {
+                tbody.innerHTML = '<tr><td colspan="8">暂无数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = threats.map((t, index) => {
+                const reasons = Array.isArray(t.reasons) ? t.reasons : [t.reasons || '-'];
+                const reasonTags = reasons.slice(0, 3).map(r => {
+                    const severity = getReasonSeverity(r);
+                    return `<span class="reason-tag ${severity}">${escapeHtml(r)}</span>`;
+                }).join('');
+                const moreTag = reasons.length > 3 ? `<span class="reason-tag">+${reasons.length - 3}</span>` : '';
+
+                return `
+                    <tr>
+                        <td><a class="ip-link" onclick="showDetail(${index})">${escapeHtml(t.ip)}</a></td>
+                        <td><span class="level-badge level-${t.threat_level}">${t.threat_level}</span></td>
+                        <td><strong>${t.score}</strong></td>
+                        <td><div class="reason-tags">${reasonTags}${moreTag}</div></td>
+                        <td>${t.hit_count}</td>
+                        <td>${formatTime(t.first_seen)}</td>
+                        <td>${formatTime(t.last_seen)}</td>
+                        <td>
+                            <button class="action-btn view" onclick="showDetail(${index})">详情</button>
+                            <button class="action-btn delete" onclick="deleteIP('${t.ip}')">删除</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 显示详情弹窗
+        function showDetail(index) {
+            const t = threatsData[index];
+            if (!t) return;
+
+            const reasons = Array.isArray(t.reasons) ? t.reasons : [t.reasons || '-'];
+            const level = t.threat_level.toLowerCase();
+            const scorePercent = Math.min((t.score / 15) * 100, 100);
+
+            const reasonsList = reasons.map(r => {
+                const severity = getReasonSeverity(r);
+                const desc = getReasonDescription(r);
+                return `
+                    <li class="${severity}">
+                        <div class="reason-title">${escapeHtml(r)}</div>
+                        <div class="reason-desc">${desc}</div>
+                    </li>
+                `;
+            }).join('');
+
+            document.getElementById('modal-body').innerHTML = `
+                <div class="detail-section">
+                    <h3>基本信息</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">IP地址</div>
+                        <div class="detail-value ip">${escapeHtml(t.ip)}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">威胁等级</div>
+                        <div class="detail-value">
+                            <span class="level-badge level-${t.threat_level}">${t.threat_level}</span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">威胁分数</div>
+                        <div class="detail-value">
+                            <div class="score-bar">
+                                <div class="bar">
+                                    <div class="bar-fill ${level}" style="width: ${scorePercent}%"></div>
+                                </div>
+                                <span class="score-value">${t.score}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">命中次数</div>
+                        <div class="detail-value"><strong>${t.hit_count}</strong> 次</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>时间信息</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">首次发现</div>
+                        <div class="detail-value">${formatTime(t.first_seen)}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">最后活动</div>
+                        <div class="detail-value">${formatTime(t.last_seen)}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>威胁行为 (${reasons.length}项)</h3>
+                    <ul class="reason-list">
+                        ${reasonsList}
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal(event) {
+            if (!event || event.target.id === 'modal-overlay') {
+                document.getElementById('modal-overlay').classList.remove('active');
+            }
+        }
+
+        // ESC关闭弹窗
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // 更新分页
+        function updatePagination() {
+            document.getElementById('page-info').textContent =
+                `第 ${currentPage} / ${totalPages} 页`;
+            document.getElementById('prev-btn').disabled = currentPage <= 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadThreats();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadThreats();
+            }
+        }
+
+        // 排序
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                const sort = th.dataset.sort;
+                if (currentSort === sort) {
+                    currentOrder = currentOrder === 'desc' ? 'asc' : 'desc';
+                } else {
+                    currentSort = sort;
+                    currentOrder = 'desc';
+                }
+
+                // 更新样式
+                document.querySelectorAll('th').forEach(t => {
+                    t.classList.remove('sorted-asc', 'sorted-desc');
+                });
+                th.classList.add(currentOrder === 'desc' ? 'sorted-desc' : 'sorted-asc');
+
+                currentPage = 1;
+                loadThreats();
+            });
+        });
+
+        // 删除IP
+        async function deleteIP(ip) {
+            if (!confirm(`确定要删除 ${ip} 吗？`)) return;
+
+            try {
+                await fetch(`/api/delete/${ip}`, { method: 'DELETE' });
+                closeModal();
+                loadStats();
+                loadThreats();
+            } catch (e) {
+                alert('删除失败');
+            }
+        }
+
+        // 导出
+        function exportData() {
+            const level = document.getElementById('level-filter').value || 'LOW';
+            window.open(`/api/export?level=${level}&format=txt`, '_blank');
+        }
+
+        // 工具函数
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;',
+                '"': '&quot;', "'": '&#39;'
+            })[m]);
+        }
+
+        function formatTime(str) {
+            if (!str) return '-';
+            return str.replace('T', ' ').slice(0, 19);
+        }
+
+        // 回车搜索
+        document.getElementById('search').addEventListener('keypress', e => {
+            if (e.key === 'Enter') loadThreats();
+        });
+
+        // 初始化
+        loadStats();
+        loadThreats();
+
+        // 定时刷新
+        setInterval(loadStats, 60000);
+    </script>
+</body>
+</html>

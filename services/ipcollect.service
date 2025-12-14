@@ -1,0 +1,28 @@
+[Unit]
+Description=IP Threat Collector Service
+Documentation=https://github.com/your-repo/ipcollect
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/www/server/ipcollect
+ExecStart=/www/server/pyporject_evn/versions/3.12.3/bin/python3 /www/server/ipcollect/main.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=append:/www/server/ipcollect/logs/service.log
+StandardError=append:/www/server/ipcollect/logs/service.log
+
+# 安全设置
+NoNewPrivileges=false
+ProtectSystem=false
+ProtectHome=false
+
+# 资源限制
+MemoryMax=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

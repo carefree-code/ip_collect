@@ -1,0 +1,138 @@
+# ============================================
+# IP威胁收集分析服务配置文件
+# ============================================
+# 版本: 2.0.0
+# 作者: sinma
+# 网站: https://www.carefreecode.com/
+# QQ: 42033223
+# 最后更新: 2025-12-14
+# ============================================
+#
+# v2.0.0 更新说明:
+# - 新增免费WAF日志支持
+# - 内置142个搜索引擎爬虫白名单
+# - 内置28个AI引擎爬虫白名单
+# - 优化检测逻辑，减少误封
+# 详见: docs/白名单综合更新总结.md
+# ============================================
+
+# 运行模式: scheduled(定时扫描) | realtime(实时监控) | both(两者都开)
+mode: scheduled
+
+# 定时扫描间隔（秒）
+scan_interval: 21600
+
+# 日志源配置
+log_sources:
+  nginx:
+    enabled: true
+    paths:
+      - /www/wwwlogs/*.log
+    exclude:
+      - "*.gz"
+
+  waf:
+    enabled: true
+    paths:
+      - /www/server/panel/plugin/btwaf/logs/*.log
+      - /www/server/panel/vhost/waf/*.log
+
+  # 宝塔免费Nginx防火墙拦截日志
+  free_waf:
+    enabled: true
+    paths:
+      - /www/wwwlogs/free_waf_log/*.log
+      - /www/wwwlogs/free_waf_log/**/*.log
+
+  ssh:
+    enabled: true
+    paths:
+      - /var/log/secure
+      - /var/log/auth.log
+
+# 威胁检测阈值
+thresholds:
+  # 高频访问：window_seconds秒内超过max_requests次请求
+  frequency:
+    window_seconds: 300
+    max_requests: 100
+
+  # 异常状态码：window_seconds秒内超过max_errors次4xx/5xx
+  error_rate:
+    window_seconds: 120
+    max_errors: 50
+
+  # 路径扫描：访问敏感路径超过此次数
+  path_scan:
+    max_sensitive_hits: 5
+
+  # SSH暴力破解：window_seconds秒内失败超过max_failures次
+  ssh_bruteforce:
+    window_seconds: 300
+    max_failures: 5
+
+# 威胁等级分数
+threat_scores:
+  frequency_violation: 3      # 高频访问
+  sensitive_path: 4           # 敏感路径扫描
+  malicious_ua: 4             # 恶意UA
+  error_flood: 2              # 大量错误
+  sql_injection: 5            # SQL注入特征
+  waf_block: 5                # WAF拦截
+  ssh_bruteforce: 5           # SSH暴力破解
+
+# 威胁等级阈值
+threat_levels:
+  LOW: 2
+  MEDIUM: 4
+  HIGH: 6
+  CRITICAL: 8
+
+# IP白名单
+# 支持格式：
+# - 单个IP: 127.0.0.1, ::1
+# - CIDR网段: 192.168.0.0/16, 2600:1f28:365:80b0::/60
+# - IP范围: 66.249.64.0-66.249.64.255
+whitelist:
+  - 127.0.0.1
+  - ::1
+  - 0.0.0.0
+
+# 白名单文件路径（推荐，支持从外部文件导入）
+# 文件格式：每行一个IP、CIDR或IP范围，支持 # 注释
+# v2.0.0已内置299条规则（142个搜索引擎 + 28个AI爬虫）
+whitelist_file: ./white.txt
+
+# 输出配置
+output:
+  file: ./ip.txt
+  # 格式: simple(仅IP) | detailed(包含详情)
+  format: detailed
+  # 是否去重
+  deduplicate: true
+
+# 数据库配置
+database:
+  path: ./data/ipcollect.db
+  # 访问日志保留天数
+  retention_days: 365
+  # 威胁IP记录保留天数（0表示永久保留）
+  threat_retention_days: 30
+
+# 日志配置
+logging:
+  level: INFO
+  file: ./logs/ipcollect.log
+  # 日志保留数量
+  backup_count: 365
+
+# 状态文件（记录扫描位置）
+state_file: ./data/state.json
+
+# Web管理界面
+web:
+  enabled: true
+  host: 0.0.0.0
+  port: 60003
+  # 访问密码（留空则不需要密码）
+  password: ""

@@ -1,0 +1,890 @@
+# 恶意规则库
+# 支持多种CMS系统的威胁检测
+
+#==============================================================================
+# 敏感路径 - 访问这些路径视为可疑
+#==============================================================================
+sensitive_paths:
+
+  #----------------------------------------------------------------------------
+  # 通用配置文件
+  #----------------------------------------------------------------------------
+  - .env
+  - .env.local
+  - .env.production
+  - .env.backup
+  - .git
+  - .git/config
+  - .git/HEAD
+  - .svn
+  - .svn/entries
+  - .htaccess
+  - .htpasswd
+  - .DS_Store
+  - .idea
+  - .vscode
+  - config.php
+  - config.inc.php
+  - config.ini
+  - config.json
+  - config.yml
+  - database.yml
+  - database.php
+  - db.php
+  - settings.php
+  - settings.ini
+  - credentials
+  - secrets
+  - .aws/credentials
+  - composer.json
+  - composer.lock
+  - package.json
+  - Gemfile
+
+  #----------------------------------------------------------------------------
+  # WordPress 相关
+  #----------------------------------------------------------------------------
+  - wp-config.php
+  - wp-config.php.bak
+  - wp-config.php.old
+  - wp-config.php.save
+  - wp-config.php.swp
+  - wp-config.php.txt
+  - wp-config-sample.php
+  - /wp-admin/setup-config.php
+  - /wp-admin/install.php
+  - /wp-admin/upgrade.php
+  - /wp-admin/includes
+  - /wp-includes/version.php
+  - /wp-content/debug.log
+  - /wp-content/uploads/wp-config.php
+  - /wp-content/backups
+  - /wp-content/backup-db
+  - /wp-content/plugins/akismet/akismet.php
+  - /xmlrpc.php
+  - /wp-json/wp/v2/users
+  - /wp-login.php
+  - /?author=1
+  - /wp-admin/admin-ajax.php
+  - /wp-content/uploads/.htaccess
+  - /wp-content/themes/.htaccess
+  - /license.txt
+  - /readme.html
+  - /wp-trackback.php
+  - /wp-cron.php
+
+  #----------------------------------------------------------------------------
+  # DedeCMS (织梦) 相关
+  #----------------------------------------------------------------------------
+  - /dede
+  - /dede/login.php
+  - /dede/index.php
+  - /dede/sys_info.php
+  - /dede/sys_admin.php
+  - /dede/file_manage_main.php
+  - /dede/file_manage_control.php
+  - /dede/tpl.php
+  - /dede/mytag_main.php
+  - /dede/module_main.php
+  - /dede/backup_main.php
+  - /dede/media_main.php
+  - /data/common.inc.php
+  - /data/config.cache.inc.php
+  - /data/admin/config_update.php
+  - /data/mysql_error_trace.inc
+  - /data/tag
+  - /include/common.inc.php
+  - /include/dedesql.class.php
+  - /member/index.php
+  - /member/reg_new.php
+  - /plus/recommend.php
+  - /plus/search.php
+  - /plus/feedback.php
+  - /plus/download.php
+  - /plus/guestbook.php
+  - /plus/diy.php
+  - /plus/mytag_js.php
+  - /plus/ad_js.php
+  - /plus/carbuyaction.php
+  - /install
+  - /install/index.php
+  - /templets/default
+
+  #----------------------------------------------------------------------------
+  # Z-Blog 相关
+  #----------------------------------------------------------------------------
+  - /zb_system
+  - /zb_system/admin
+  - /zb_system/login.php
+  - /zb_system/cmd.php
+  - /zb_system/admin/edit.php
+  - /zb_system/admin/member.php
+  - /zb_system/function/c_system_base.php
+  - /zb_users/c_option.php
+  - /zb_users/data
+  - /zb_users/plugin
+  - /zb_users/upload
+  - /data/zblog.db
+  - /data/%23zblog.mdb
+  - /zblogphp.php
+
+  #----------------------------------------------------------------------------
+  # Typecho 相关
+  #----------------------------------------------------------------------------
+  - /admin/login.php
+  - /admin/index.php
+  - /admin/manage-posts.php
+  - /admin/write-post.php
+  - /admin/manage-pages.php
+  - /admin/manage-comments.php
+  - /admin/write-page.php
+  - /admin/manage-users.php
+  - /admin/themes.php
+  - /admin/plugins.php
+  - /admin/options-general.php
+  - /config.inc.php
+  - /install.php
+  - /install/index.php
+  - /usr/uploads
+  - /usr/themes
+  - /usr/plugins
+  - /var/Typecho
+
+  #----------------------------------------------------------------------------
+  # Joomla 相关
+  #----------------------------------------------------------------------------
+  - /administrator
+  - /administrator/index.php
+  - /administrator/manifests
+  - /administrator/components
+  - /administrator/modules
+  - /administrator/templates
+  - /configuration.php
+  - /configuration.php.bak
+  - /configuration.php.dist
+  - /configuration.php-dist
+  - /htaccess.txt
+  - /web.config.txt
+  - /joomla.xml
+  - /language/en-GB/en-GB.xml
+  - /language/en-GB/install.xml
+  - /libraries/joomla
+  - /libraries/cms
+  - /plugins/system
+  - /templates/system
+  - /installation
+  - /installation/index.php
+  - /_files
+  - /cache
+  - /logs
+  - /tmp
+
+  #----------------------------------------------------------------------------
+  # 迅睿CMS (XunRuiCMS) 相关
+  #----------------------------------------------------------------------------
+  - /admin.php
+  - /index.php?c=admin
+  - /index.php?s=admin
+  - /cache/data
+  - /config/database.php
+  - /config/system.php
+  - /config/version.txt
+  - /dayrui
+  - /api.php
+  - /member.php
+  - /install.php
+  - /D/extend
+
+  #----------------------------------------------------------------------------
+  # 帝国CMS (EmpireCMS) 相关
+  #----------------------------------------------------------------------------
+  - /e/admin
+  - /e/admin/index.php
+  - /e/admin/login.php
+  - /e/admin/ecmsinfo.php
+  - /e/class/config.php
+  - /e/config/config.php
+  - /e/data/dbcache
+  - /e/data/adminlogin
+  - /e/data/html
+  - /e/install
+  - /e/member
+  - /e/public
+  - /e/tool
+  - /e/wap
+
+  #----------------------------------------------------------------------------
+  # PHPCMS 相关
+  #----------------------------------------------------------------------------
+  - /phpcms/modules/admin
+  - /phpcms/install
+  - /phpcms/libs/classes/config.class.php
+  - /caches/configs/database.php
+  - /caches/configs/system.php
+  - /api.php
+  - /statics/js/ckeditor
+  - /phpsso_server
+  - /phpsso_server/admin.php
+
+  #----------------------------------------------------------------------------
+  # Discuz 相关
+  #----------------------------------------------------------------------------
+  - /uc_server
+  - /uc_server/admin.php
+  - /uc_server/install
+  - /uc_client/data/cache
+  - /config/config_global.php
+  - /config/config_ucenter.php
+  - /data/config.inc.php
+  - /uc_client/client.php
+  - /admin.php
+  - /utility
+  - /install
+  - /api/manyou
+  - /source/plugin
+
+  #----------------------------------------------------------------------------
+  # Drupal 相关
+  #----------------------------------------------------------------------------
+  - /core/install.php
+  - /core/CHANGELOG.txt
+  - /sites/default/settings.php
+  - /sites/default/default.settings.php
+  - /sites/default/files
+  - /modules/system/system.info
+  - /CHANGELOG.txt
+  - /INSTALL.txt
+  - /INSTALL.mysql.txt
+  - /update.php
+  - /cron.php
+
+  #----------------------------------------------------------------------------
+  # ThinkPHP 相关
+  #----------------------------------------------------------------------------
+  - /index.php?s=/Index/\\think\\app/invokefunction
+  - /index.php?s=index/\\think\\request/input
+  - /index.php?s=index/\\think\\Container/invokefunction
+  - /index.php?s=captcha
+  - /_runtime
+  - /runtime
+  - /runtime/log
+  - /Application/Runtime
+  - /application/database.php
+  - /config/database.php
+  - /thinkphp/library
+  - /vendor/phpunit
+
+  #----------------------------------------------------------------------------
+  # Laravel 相关
+  #----------------------------------------------------------------------------
+  - /.env
+  - /storage/logs
+  - /storage/logs/laravel.log
+  - /storage/framework/sessions
+  - /bootstrap/cache
+  - /vendor/composer/installed.json
+  - /artisan
+  - /_debugbar
+  - /telescope
+
+  #----------------------------------------------------------------------------
+  # 通用后台路径
+  #----------------------------------------------------------------------------
+  - /admin
+  - /admin.php
+  - /admin/login
+  - /admin/login.php
+  - /admin/admin.php
+  - /backend
+  - /manage
+  - /manager
+  - /system
+  - /console
+  - /dashboard
+  - /control
+  - /controlpanel
+  - /cpanel
+  - /webadmin
+  - /siteadmin
+  - /moderator
+  - /admincp
+
+  #----------------------------------------------------------------------------
+  # 数据库管理工具
+  #----------------------------------------------------------------------------
+  - /phpmyadmin
+  - /pma
+  - /myadmin
+  - /mysql
+  - /mysqladmin
+  - /adminer
+  - /adminer.php
+  - /db
+  - /database
+  - /dbadmin
+  - /sql
+
+  #----------------------------------------------------------------------------
+  # 常见漏洞路径
+  #----------------------------------------------------------------------------
+  - /actuator
+  - /actuator/env
+  - /actuator/health
+  - /actuator/heapdump
+  - /actuator/configprops
+  - /druid
+  - /druid/index.html
+  - /swagger
+  - /swagger-ui.html
+  - /swagger-resources
+  - /api-docs
+  - /v2/api-docs
+  - /graphql
+  - /graphiql
+  - /jenkins
+  - /jenkins/script
+  - /solr
+  - /solr/admin
+  - /elasticsearch
+  - /elasticsearch/_cat
+  - /_cat/indices
+  - /_nodes
+  - /_cluster
+  - /debug
+  - /debug/default/view
+  - /trace
+  - /metrics
+  - /monitor
+  - /status
+  - /server-status
+  - /info.php
+  - /phpinfo.php
+  - /test.php
+  - /i.php
+  - /probe.php
+
+  #----------------------------------------------------------------------------
+  # 备份文件
+  #----------------------------------------------------------------------------
+  - .bak
+  - .backup
+  - .old
+  - .orig
+  - .save
+  - .swp
+  - .swo
+  - "~"
+  - .zip
+  - .tar
+  - .tar.gz
+  - .tgz
+  - .rar
+  - .7z
+  - .sql
+  - .sql.gz
+  - .dump
+  - .mdb
+  - .log
+  - .txt
+  - www.zip
+  - www.tar.gz
+  - wwwroot.zip
+  - backup.zip
+  - backup.sql
+  - db.sql
+  - database.sql
+  - data.sql
+  - site.zip
+  - web.zip
+  - 1.zip
+  - 1.sql
+
+  #----------------------------------------------------------------------------
+  # Shell/Webshell 相关
+  #----------------------------------------------------------------------------
+  - /shell
+  - /shell.php
+  - /cmd
+  - /cmd.php
+  - /eval
+  - /eval.php
+  - /exec
+  - /system
+  - c99.php
+  - r57.php
+  - webshell
+  - /hack.php
+  - /hacker.php
+  - /1.php
+  - /x.php
+  - /xx.php
+  - /a.php
+  - /b.php
+  - /test.php
+  - /config.php.bak
+  - /shell.asp
+  - /cmd.asp
+  - /tunnel.php
+  - /tunnel.jsp
+
+  #----------------------------------------------------------------------------
+  # 版本控制和开发文件
+  #----------------------------------------------------------------------------
+  - /.git
+  - /.git/config
+  - /.git/HEAD
+  - /.git/index
+  - /.git/logs/HEAD
+  - /.gitignore
+  - /.svn
+  - /.svn/entries
+  - /.svn/wc.db
+  - /.hg
+  - /.bzr
+  - /CVS/Root
+  - /CVS/Entries
+  - /.idea/workspace.xml
+  - /.vscode/settings.json
+  - /nbproject
+  - /Thumbs.db
+  - /desktop.ini
+
+#==============================================================================
+# 恶意User-Agent特征（正则）
+#==============================================================================
+malicious_ua_patterns:
+  # 安全扫描工具
+  - sqlmap
+  - nikto
+  - nmap
+  - masscan
+  - zgrab
+  - zmap
+  - nessus
+  - openvas
+  - acunetix
+  - netsparker
+  - burpsuite
+  - burp
+  - owasp
+  - w3af
+
+  # 目录扫描工具
+  - dirbuster
+  - dirb
+  - gobuster
+  - wfuzz
+  - ffuf
+  - feroxbuster
+  - dirsearch
+
+  # 漏洞检测工具
+  - nuclei
+  - httpx
+  - subfinder
+  - whatweb
+  - webanalyze
+  - wafw00f
+
+  # CMS扫描工具
+  - wpscan
+  - joomscan
+  - droopescan
+  - cmsmap
+  - cmseek
+  - wig
+  - drupwn
+
+  # 暴力破解工具
+  - hydra
+  - medusa
+  - patator
+  - hashcat
+  - john
+  - brutex
+
+  # 爬虫和采集
+  - scrapy
+  - heritrix
+  - HTTrack
+  - WebCopier
+  - WebZIP
+  - Teleport
+  - harvest
+  - collector
+
+  # 自动化攻击
+  - havij
+  - pangolin
+  - safe3
+  - jsql
+  - "sql power injector"
+
+  # 空UA或异常UA
+  - ^-$
+  - ^$
+
+#==============================================================================
+# SQL注入特征（正则）
+#==============================================================================
+sql_injection_patterns:
+  # 基本注入
+  - "union.*select"
+  - "union.*all.*select"
+  - "select.*from"
+  - "select.*concat"
+  - "select.*char"
+  - "insert.*into"
+  - "update.*set"
+  - "delete.*from"
+  - "drop.*table"
+  - "drop.*database"
+  - "truncate.*table"
+  - "alter.*table"
+  - "create.*table"
+
+  # 布尔盲注（添加更严格的规则，避免误伤正常查询参数）
+  - "'\\s*or\\s*'?1'?\\s*=\\s*'?1"
+  - "\"\\s*or\\s*\"?1\"?\\s*=\\s*\"?1"
+  - "'\\s*or\\s*'.*'\\s*=\\s*'"
+  - "\"\\s*or\\s*\".*\"\\s*=\\s*\""
+  - "'\\s*and\\s*'.*'\\s*=\\s*'"
+  - "\"\\s*and\\s*\".*\"\\s*=\\s*\""
+  - "or\\s+1\\s*=\\s*1"
+  - "or\\s+1=1"
+  - "and\\s+1\\s*=\\s*1"
+  - "and\\s+1=1"
+  - "'\\s*or\\s*true"
+  - "'\\s*or\\s*false"
+
+  # 时间盲注
+  - "sleep\\s*\\("
+  - "benchmark\\s*\\("
+  - "waitfor.*delay"
+  - "pg_sleep"
+
+  # 文件操作
+  - "load_file\\s*\\("
+  - "into.*outfile"
+  - "into.*dumpfile"
+  - "load.*data.*infile"
+
+  # 函数利用
+  - "concat\\s*\\("
+  - "concat_ws\\s*\\("
+  - "group_concat\\s*\\("
+  - "char\\s*\\("
+  - "ascii\\s*\\("
+  - "ord\\s*\\("
+  - "hex\\s*\\("
+  - "unhex\\s*\\("
+  - "md5\\s*\\("
+  - "substr\\s*\\("
+  - "substring\\s*\\("
+  - "mid\\s*\\("
+  - "left\\s*\\("
+  - "right\\s*\\("
+  - "length\\s*\\("
+  - "count\\s*\\("
+  - "if\\s*\\("
+  - "ifnull\\s*\\("
+  - "nullif\\s*\\("
+  - "case.*when"
+
+  # 编码绕过
+  - "0x[0-9a-fA-F]+"
+  - "char\\([0-9]+"
+  - "%27"
+  - "%22"
+  - "%00"
+
+  # 注释符
+  - "--\\s*$"
+  - "--\\+"
+  - "#\\s*$"
+  - "/\\*.*\\*/"
+  - "/\\*!"
+
+  # 特殊语法
+  - "information_schema"
+  - "mysql\\.user"
+  - "sys\\.databases"
+  - "master\\.dbo"
+  - "@@version"
+  - "@@datadir"
+  - "@@basedir"
+  - "user\\s*\\(\\s*\\)"
+  - "database\\s*\\(\\s*\\)"
+  - "version\\s*\\(\\s*\\)"
+  - "current_user"
+
+#==============================================================================
+# XSS特征（正则）
+#==============================================================================
+xss_patterns:
+  # 脚本标签
+  - "<script"
+  - "</script"
+  - "<script.*>"
+  - "<script.*src"
+
+  # 事件处理器
+  - "javascript:"
+  - "vbscript:"
+  - "data:text/html"
+  - "onerror\\s*="
+  - "onload\\s*="
+  - "onclick\\s*="
+  - "onmouseover\\s*="
+  - "onmouseout\\s*="
+  - "onfocus\\s*="
+  - "onblur\\s*="
+  - "onchange\\s*="
+  - "onsubmit\\s*="
+  - "ondblclick\\s*="
+  - "onkeydown\\s*="
+  - "onkeyup\\s*="
+  - "onkeypress\\s*="
+  - "onmousedown\\s*="
+  - "onmouseup\\s*="
+  - "onmousemove\\s*="
+  - "ondrag\\s*="
+  - "ondrop\\s*="
+  - "oncopy\\s*="
+  - "oncut\\s*="
+  - "onpaste\\s*="
+  - "onscroll\\s*="
+  - "oninput\\s*="
+  - "onanimationend\\s*="
+  - "ontransitionend\\s*="
+
+  # 危险函数
+  - "eval\\s*\\("
+  - "alert\\s*\\("
+  - "confirm\\s*\\("
+  - "prompt\\s*\\("
+  - "document\\.cookie"
+  - "document\\.domain"
+  - "document\\.location"
+  - "document\\.write"
+  - "document\\.body"
+  - "window\\.location"
+  - "window\\.open"
+  - "location\\.href"
+  - "location\\.replace"
+  - "innerHTML"
+  - "outerHTML"
+  - "insertAdjacentHTML"
+  - "fromCharCode"
+  - "String\\.fromCharCode"
+
+  # 其他标签
+  - "<img.*onerror"
+  - "<svg.*onload"
+  - "<body.*onload"
+  - "<iframe"
+  - "<object"
+  - "<embed"
+  - "<applet"
+  - "<meta.*http-equiv"
+  - "<link.*href.*javascript"
+  - "<base.*href"
+  - "expression\\s*\\("
+  - "url\\s*\\(.*javascript"
+
+#==============================================================================
+# 路径遍历特征
+#==============================================================================
+path_traversal_patterns:
+  - "\\.\\./\\.\\."
+  - "\\.\\.\\\\"
+  - "\\.\\./"
+  - "\\.\\.\\\\"
+  - "%2e%2e"
+  - "%2e%2e/"
+  - "%2e%2e%2f"
+  - "%252e%252e"
+  - "..%c0%af"
+  - "..%c1%9c"
+  - "..%255c"
+  - "/etc/passwd"
+  - "/etc/shadow"
+  - "/etc/hosts"
+  - "/etc/group"
+  - "/etc/motd"
+  - "/proc/self"
+  - "/proc/version"
+  - "/proc/cmdline"
+  - "c:\\windows"
+  - "c:\\boot.ini"
+  - "c:\\inetpub"
+  - "windows/system32"
+  - "windows/win.ini"
+  - "boot\\.ini"
+  - "win\\.ini"
+  - "system32"
+  - "\\x00"
+  - "%00"
+
+#==============================================================================
+# 命令注入特征
+#==============================================================================
+command_injection_patterns:
+  # 命令分隔符
+  - ";\\s*cat\\s"
+  - ";\\s*ls\\s"
+  - ";\\s*dir\\s"
+  - ";\\s*id\\s*"
+  - ";\\s*whoami"
+  - ";\\s*pwd"
+  - ";\\s*uname"
+  - ";\\s*hostname"
+  - ";\\s*ifconfig"
+  - ";\\s*ipconfig"
+  - ";\\s*netstat"
+  - ";\\s*wget\\s"
+  - ";\\s*curl\\s"
+  - ";\\s*ping\\s"
+  - ";\\s*nc\\s"
+  - ";\\s*ncat\\s"
+  - ";\\s*bash"
+  - ";\\s*sh\\s"
+  - ";\\s*python"
+  - ";\\s*perl"
+  - ";\\s*ruby"
+  - ";\\s*php"
+
+  # 管道符
+  - "\\|\\s*cat\\s"
+  - "\\|\\s*ls\\s"
+  - "\\|\\s*id\\s"
+  - "\\|\\s*bash"
+  - "\\|\\s*sh\\s"
+  - "\\|\\s*wget"
+  - "\\|\\s*curl"
+
+  # 命令替换
+  - "`.*`"
+  - "\\$\\(.*\\)"
+
+  # 逻辑运算符
+  - "&&\\s*cat"
+  - "&&\\s*ls"
+  - "&&\\s*id"
+  - "&&\\s*whoami"
+  - "\\|\\|\\s*cat"
+  - "\\|\\|\\s*ls"
+
+  # 换行符
+  - "%0a"
+  - "%0d"
+  - "\\n"
+  - "\\r"
+
+  # 危险命令
+  - "/bin/bash"
+  - "/bin/sh"
+  - "/usr/bin"
+  - "cmd\\.exe"
+  - "powershell"
+  - "command\\.com"
+
+#==============================================================================
+# 文件包含特征（LFI/RFI）
+#==============================================================================
+file_inclusion_patterns:
+  # 本地文件包含
+  - "file=/etc"
+  - "page=/etc"
+  - "path=/etc"
+  - "include=/etc"
+  - "file=\\.\\."
+  - "page=\\.\\."
+  - "path=\\.\\."
+  - "include=\\.\\."
+  - "php://input"
+  - "php://filter"
+  - "php://data"
+  - "phar://"
+  - "expect://"
+  - "zip://"
+  - "data://"
+  - "glob://"
+
+  # 远程文件包含
+  - "=http://"
+  - "=https://"
+  - "=ftp://"
+  - "file=http"
+  - "page=http"
+  - "path=http"
+  - "include=http"
+  - "url=http"
+
+#==============================================================================
+# SSRF特征
+#==============================================================================
+ssrf_patterns:
+  - "url=http://127"
+  - "url=http://localhost"
+  - "url=http://0\\.0\\.0\\.0"
+  - "url=http://\\[::1\\]"
+  - "url=http://169\\.254"
+  - "url=http://10\\."
+  - "url=http://172\\.16"
+  - "url=http://192\\.168"
+  - "url=file://"
+  - "url=dict://"
+  - "url=gopher://"
+  - "url=ldap://"
+  - "@127\\.0\\.0\\.1"
+  - "@localhost"
+  - "%40127\\.0\\.0\\.1"
+  - "%40localhost"
+
+#==============================================================================
+# XML/XXE特征
+#==============================================================================
+xxe_patterns:
+  - "<!ENTITY"
+  - "<!DOCTYPE"
+  - "SYSTEM\\s+\"file:"
+  - "SYSTEM\\s+\"http:"
+  - "SYSTEM\\s+\"https:"
+  - "SYSTEM\\s+\"ftp:"
+  - "SYSTEM\\s+\"php:"
+  - "PUBLIC\\s+"
+  - "%xxe;"
+  - "&xxe;"
+
+#==============================================================================
+# 模板注入特征(SSTI)
+#==============================================================================
+ssti_patterns:
+  - "\\{\\{.*\\}\\}"
+  - "\\{%.*%\\}"
+  - "\\$\\{.*\\}"
+  - "#\\{.*\\}"
+  - "<%.*%>"
+  - "\\{\\{config\\}\\}"
+  - "\\{\\{self\\}\\}"
+  - "__class__"
+  - "__mro__"
+  - "__subclasses__"
+  - "__globals__"
+  - "__builtins__"
+  - "__import__"
+
+#==============================================================================
+# Java反序列化特征
+#==============================================================================
+java_deserialization_patterns:
+  - "rO0AB"
+  - "aced0005"
+  - "H4sIA"
+  - "javax\\.management"
+  - "java\\.lang\\.Runtime"
+  - "java\\.lang\\.ProcessBuilder"
+  - "org\\.apache\\.commons\\.collections"
+  - "org\\.springframework"
+  - "com\\.sun\\.rowset"
